@@ -1,0 +1,528 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUXE — Luxury Fragrances</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --gold:#d7b477;
+  --black:#080807;
+  --panel:#11100e;
+  --text:#f5eee4;
+  --muted:#999188;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--text);font-family:Inter,sans-serif;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit;cursor:pointer}
+.gold{color:var(--gold)}
+
+header{
+  height:76px;padding:0 6%;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid #ffffff15;
+  position:sticky;top:0;z-index:100;
+  background:#080807ed;backdrop-filter:blur(15px)
+}
+.logo{font:600 34px 'Cormorant Garamond';letter-spacing:7px;color:var(--gold)}
+.logo small{display:block;font:9px Inter;letter-spacing:5px;text-align:center}
+nav{display:flex;gap:30px}
+nav a{font-size:12px;color:#ccc;transition:.3s}
+nav a:hover{color:var(--gold)}
+.cart-button{border:1px solid var(--gold);background:transparent;color:var(--gold);padding:11px 16px;font-size:12px}
+.menu{display:none;background:none;color:var(--gold);border:0;font-size:25px}
+
+.hero{
+  min-height:650px;padding:55px 7%;
+  display:grid;grid-template-columns:1fr 1fr;
+  align-items:center;position:relative;overflow:hidden
+}
+.hero:before{
+  content:"";position:absolute;right:5%;top:5%;
+  width:500px;height:500px;background:#b9863420;
+  filter:blur(120px);border-radius:50%
+}
+.hero-content{z-index:2}
+.tag{font-size:10px;letter-spacing:5px;color:var(--gold);margin-bottom:22px}
+h1{font:400 clamp(65px,9vw,115px)/.88 'Cormorant Garamond'}
+h1 span{color:var(--gold);font-style:italic}
+.hero p{max-width:420px;color:var(--muted);font-size:14px;line-height:1.9;margin:28px 0}
+.btn{
+  display:inline-block;padding:15px 28px;
+  border:1px solid var(--gold);background:var(--gold);
+  color:#080807;font-size:11px;letter-spacing:2px;
+  transition:.3s
+}
+.btn:hover{background:transparent;color:var(--gold);transform:translateY(-3px)}
+.outline{background:transparent;color:var(--gold)}
+.scene{height:500px;position:relative;z-index:2}
+#bottle3d{width:100%;height:100%;display:block;touch-action:none}
+.hint{position:absolute;bottom:15px;right:10px;color:#888;font-size:10px;letter-spacing:2px}
+
+.benefits{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  padding:30px 7%;border-block:1px solid #ffffff15;text-align:center
+}
+.benefits h3{font:26px 'Cormorant Garamond';color:var(--gold)}
+.benefits p{font-size:9px;letter-spacing:2px;color:#888;margin-top:8px}
+
+.section{padding:90px 7%;text-align:center}
+.section-title{font:55px 'Cormorant Garamond'}
+.section-title span{color:var(--gold)}
+.subtitle{max-width:500px;margin:18px auto 45px;color:#999;font-size:13px;line-height:1.8}
+
+.products{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.product{background:var(--panel);border:1px solid #ffffff15;text-align:left;transition:.4s}
+.product:hover{transform:translateY(-7px);border-color:var(--gold)}
+.product-img{height:330px;overflow:hidden;background:#17130f}
+.product-img img{width:100%;height:100%;object-fit:cover;transition:.6s}
+.product:hover img{transform:scale(1.08)}
+.product-info{padding:24px}
+.product-info h3{font:30px 'Cormorant Garamond'}
+.product-info p{color:#999;font-size:12px;margin-top:8px}
+.price{color:var(--gold);font-size:20px;margin:18px 0}
+.product-info button{width:100%}
+
+.story{display:grid;grid-template-columns:1fr 1fr;gap:45px;align-items:center;text-align:left}
+.story img{width:100%;height:420px;object-fit:cover}
+.story h2{font:52px 'Cormorant Garamond'}
+.story h2 span{color:var(--gold)}
+.story p{font-size:13px;line-height:2;color:#999;margin:25px 0}
+
+.quote{font:italic 34px 'Cormorant Garamond';color:var(--gold);max-width:700px;margin:auto}
+
+footer{padding:35px 7%;border-top:1px solid #ffffff15;text-align:center;color:#777;font-size:11px;letter-spacing:2px}
+footer a{color:var(--gold)}
+
+.cart-overlay{display:none;position:fixed;inset:0;background:#000b;z-index:200}
+.cart-overlay.active{display:block}
+.cart-panel{
+  position:fixed;right:-100%;top:0;width:min(400px,100%);
+  height:100%;background:#11100e;z-index:201;
+  padding:28px;transition:.35s;overflow:auto
+}
+.cart-panel.active{right:0}
+.cart-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
+.cart-top h2{font:35px 'Cormorant Garamond';color:var(--gold)}
+.close{background:none;border:0;color:white;font-size:28px}
+.cart-row{display:flex;justify-content:space-between;align-items:center;padding:15px 0;border-bottom:1px solid #ffffff15;font-size:13px}
+.remove{background:none;border:0;color:#c88;font-size:11px}
+.total{color:var(--gold);font-size:20px;margin:25px 0}
+
+@media(max-width:750px){
+  header{height:68px;padding:0 5%}
+  .logo{font-size:27px;letter-spacing:5px}
+  nav{display:none}
+  .menu{display:block}
+  #mobileNav{
+    display:none;position:absolute;top:68px;left:0;width:100%;
+    background:#11100e;padding:25px;flex-direction:column;gap:20px
+  }
+  #mobileNav.active{display:flex}
+  #mobileNav a{color:#ddd}
+  .hero{grid-template-columns:1fr;text-align:center;padding:45px 5% 20px}
+  .hero p{margin:25px auto}
+  .scene{height:370px}
+  .benefits{padding:25px 2%}
+  .benefits h3{font-size:19px}
+  .benefits p{font-size:8px;letter-spacing:1px}
+  .section{padding:65px 5%}
+  .section-title{font-size:42px}
+  .products{grid-template-columns:1fr}
+  .product-img{height:380px}
+  .story{grid-template-columns:1fr}
+  .story img{height:300px}
+  .story h2{font-size:42px}
+  .quote{font-size:28px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <a href="#home" class="logo">LUXE<small>FRAGRANCES</small></a>
+
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#collection">Collection</a>
+    <a href="#story">Our Story</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <div style="display:flex;align-items:center;gap:12px">
+    <button class="menu" onclick="toggleMenu()">☰</button>
+    <button class="cart-button" onclick="openCart()">BAG (<span id="count">0</span>)</button>
+  </div>
+
+  <div id="mobileNav">
+    <a href="#home" onclick="toggleMenu()">Home</a>
+    <a href="#collection" onclick="toggleMenu()">Collection</a>
+    <a href="#story" onclick="toggleMenu()">Our Story</a>
+    <a href="#contact" onclick="toggleMenu()">Contact</a>
+  </div>
+</header>
+
+<section class="hero" id="home">
+  <div class="hero-content">
+    <div class="tag">PREMIUM FRAGRANCE</div>
+    <h1>LUXE<br><span>More Than</span><br>a Scent.</h1>
+    <p>
+      Indulge in the essence of luxury with our
+      exquisite fragrances, crafted for the extraordinary.
+      Discover your signature scent.
+    </p>
+    <a href="#collection" class="btn">EXPLORE COLLECTION →</a>
+  </div>
+
+  <div class="scene">
+    <canvas id="bottle3d"></canvas>
+    <div class="hint">✦ DRAG TO ROTATE ✦</div>
+  </div>
+</section>
+
+<section class="benefits">
+  <div><h3>Luxury</h3><p>PREMIUM QUALITY</p></div>
+  <div><h3>Timeless</h3><p>EXCLUSIVE FRAGRANCE</p></div>
+  <div><h3>Elegant</h3><p>CRAFTED WITH PASSION</p></div>
+</section>
+
+<section class="section" id="collection">
+  <div class="tag">DISCOVER YOUR SIGNATURE</div>
+  <h2 class="section-title">Our <span>Collection</span></h2>
+  <p class="subtitle">Three extraordinary fragrances. Three unforgettable experiences.</p>
+
+  <div class="products">
+
+    <div class="product">
+      <div class="product-img">
+        <img src="https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=900&q=85" alt="Luxury Oud perfume">
+      </div>
+      <div class="product-info">
+        <h3>Oud Royale</h3>
+        <p>Deep · Bold · Timeless</p>
+        <div class="price">₹14,999</div>
+        <button class="btn" onclick="addToCart('Oud Royale',14999)">ADD TO BAG</button>
+      </div>
+    </div>
+
+    <div class="product">
+      <div class="product-img">
+        <img src="https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=85" alt="Floral perfume">
+      </div>
+      <div class="product-info">
+        <h3>Floral Dream</h3>
+        <p>Soft · Elegant · Eternal</p>
+        <div class="price">₹12,999</div>
+        <button class="btn" onclick="addToCart('Floral Dream',12999)">ADD TO BAG</button>
+      </div>
+    </div>
+
+    <div class="product">
+      <div class="product-img">
+        <img src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=900&q=85" alt="Blue luxury perfume">
+      </div>
+      <div class="product-info">
+        <h3>Aqua Noir</h3>
+        <p>Fresh · Dynamic · Bold</p>
+        <div class="price">₹13,999</div>
+        <button class="btn" onclick="addToCart('Aqua Noir',13999)">ADD TO BAG</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="section" id="story">
+  <div class="story">
+    <img src="https://images.unsplash.com/photo-1615634260167-c8cdede054de?auto=format&fit=crop&w=1000&q=85" alt="LUXE fragrance collection">
+
+    <div>
+      <div class="tag">THE LUXE EXPERIENCE</div>
+      <h2>More Than a Scent.<br><span>It's a Lifestyle.</span></h2>
+      <p>
+        LUXE celebrates individuality, sophistication
+        and timeless elegance. Our fragrance collection
+        is inspired by luxury, confidence and unforgettable moments.
+      </p>
+      <a href="#collection" class="btn">DISCOVER LUXE</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="tag">THE LUXE PROMISE</div>
+  <p class="quote">“Luxury is not just a fragrance. It's a feeling that stays forever.”</p>
+</section>
+
+<footer id="contact">
+  LUXE FRAGRANCES<br><br>
+  CONTACT · INSTAGRAM · CUSTOMER CARE<br><br>
+  © 2026 LUXE. ALL RIGHTS RESERVED.
+</footer>
+
+<!-- Shopping cart -->
+
+<div class="cart-overlay" id="overlay" onclick="closeCart()"></div>
+
+<div class="cart-panel" id="cartPanel">
+  <div class="cart-top">
+    <h2>Your Bag</h2>
+    <button class="close" onclick="closeCart()">×</button>
+  </div>
+
+  <div id="cartItems">Your bag is empty.</div>
+  <div class="total">Total: ₹<span id="total">0</span></div>
+
+  <button class="btn" style="width:100%" onclick="checkout()">CHECKOUT</button>
+
+  <p style="color:#777;font-size:11px;margin-top:15px">
+    Payment system will be connected later.
+  </p>
+</div>
+
+<!-- Three.js 3D bottle -->
+
+<script type="module">
+import * as THREE from
+'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+
+const canvas=document.getElementById('bottle3d');
+const scene=new THREE.Scene();
+
+const camera=new THREE.PerspectiveCamera(35,1,.1,100);
+camera.position.z=7;
+
+const renderer=new THREE.WebGLRenderer({
+  canvas,alpha:true,antialias:true
+});
+
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(canvas.clientWidth,canvas.clientHeight);
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.5;
+
+scene.add(new THREE.AmbientLight(0xffffff,1.5));
+
+const goldLight=new THREE.PointLight(0xffc66e,40);
+goldLight.position.set(3,3,4);
+scene.add(goldLight);
+
+const whiteLight=new THREE.PointLight(0xffffff,30);
+whiteLight.position.set(-3,2,3);
+scene.add(whiteLight);
+
+const group=new THREE.Group();
+scene.add(group);
+
+// Perfume bottle geometry
+const shape=new THREE.Shape();
+
+shape.moveTo(-.7,-1.3);
+shape.lineTo(.7,-1.3);
+shape.lineTo(.85,-1.1);
+shape.lineTo(.85,.5);
+shape.lineTo(.65,.8);
+shape.lineTo(.4,1);
+shape.lineTo(.4,1.35);
+shape.lineTo(-.4,1.35);
+shape.lineTo(-.4,1);
+shape.lineTo(-.65,.8);
+shape.lineTo(-.85,.5);
+shape.lineTo(-.85,-1.1);
+shape.closePath();
+
+const geometry=new THREE.ExtrudeGeometry(shape,{
+  depth:.5,
+  bevelEnabled:true,
+  bevelSegments:5,
+  bevelSize:.08,
+  bevelThickness:.08
+});
+
+const glass=new THREE.MeshPhysicalMaterial({
+  color:0x9a642b,
+  metalness:.35,
+  roughness:.12,
+  transparent:true,
+  opacity:.95,
+  clearcoat:1
+});
+
+group.add(new THREE.Mesh(geometry,glass));
+
+// Bottle cap
+const cap=new THREE.Mesh(
+  new THREE.CylinderGeometry(.38,.42,.65,48),
+  new THREE.MeshStandardMaterial({
+    color:0x17130d,
+    metalness:.9,
+    roughness:.15
+  })
+);
+
+cap.position.y=1.8;
+group.add(cap);
+
+// Gold collar
+const collar=new THREE.Mesh(
+  new THREE.CylinderGeometry(.42,.42,.1,48),
+  new THREE.MeshStandardMaterial({
+    color:0xd5b477,
+    metalness:.9,
+    roughness:.2
+  })
+);
+
+collar.position.y=1.45;
+group.add(collar);
+
+// Custom LUXE label
+const labelCanvas=document.createElement('canvas');
+labelCanvas.width=512;
+labelCanvas.height=256;
+
+const ctx=labelCanvas.getContext('2d');
+ctx.fillStyle='#100c07';
+ctx.fillRect(0,0,512,256);
+
+ctx.strokeStyle='#d5b477';
+ctx.lineWidth=6;
+ctx.strokeRect(12,12,488,232);
+
+ctx.fillStyle='#d5b477';
+ctx.textAlign='center';
+ctx.font='bold 80px Georgia';
+ctx.fillText('LUXE',256,130);
+ctx.font='24px Georgia';
+ctx.fillText('FRAGRANCES',256,180);
+
+const texture=new THREE.CanvasTexture(labelCanvas);
+
+const label=new THREE.Mesh(
+  new THREE.PlaneGeometry(1.3,.65),
+  new THREE.MeshBasicMaterial({map:texture})
+);
+
+label.position.set(0,0,.58);
+group.add(label);
+
+group.position.y=-.15;
+
+// Drag to rotate
+let dragging=false;
+let lastX=0;
+let lastY=0;
+
+canvas.addEventListener('pointerdown',e=>{
+  dragging=true;
+  lastX=e.clientX;
+  lastY=e.clientY;
+  canvas.setPointerCapture(e.pointerId);
+});
+
+canvas.addEventListener('pointermove',e=>{
+  if(!dragging)return;
+  group.rotation.y+=(e.clientX-lastX)*.012;
+  group.rotation.x+=(e.clientY-lastY)*.005;
+  lastX=e.clientX;
+  lastY=e.clientY;
+});
+
+canvas.addEventListener('pointerup',()=>dragging=false);
+canvas.addEventListener('pointercancel',()=>dragging=false);
+
+// Responsive
+function resize(){
+  const w=canvas.clientWidth;
+  const h=canvas.clientHeight;
+  renderer.setSize(w,h);
+  camera.aspect=w/h;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize',resize);
+
+// Animation
+function animate(){
+  requestAnimationFrame(animate);
+
+  if(!dragging){
+    group.rotation.y+=.004;
+  }
+
+  group.position.y=-.15+Math.sin(Date.now()*.001)*.06;
+  renderer.render(scene,camera);
+}
+
+resize();
+animate();
+</script>
+
+<script>
+// Cart
+let cart=[];
+
+function addToCart(name,price){
+  cart.push({name,price});
+  document.getElementById('count').textContent=cart.length;
+  renderCart();
+  openCart();
+}
+
+function renderCart(){
+  const container=document.getElementById('cartItems');
+
+  if(cart.length===0){
+    container.innerHTML='Your bag is empty.';
+  }else{
+    container.innerHTML=cart.map((item,index)=>`
+      <div class="cart-row">
+        <div>
+          ${item.name}<br>
+          <span style="color:#d5b477">
+          ₹${item.price.toLocaleString('en-IN')}
+          </span>
+        </div>
+        <button class="remove" onclick="removeItem(${index})">Remove</button>
+      </div>
+    `).join('');
+  }
+
+  const sum=cart.reduce((total,item)=>total+item.price,0);
+  document.getElementById('total').textContent=sum.toLocaleString('en-IN');
+}
+
+function removeItem(index){
+  cart.splice(index,1);
+  document.getElementById('count').textContent=cart.length;
+  renderCart();
+}
+
+function openCart(){
+  document.getElementById('cartPanel').classList.add('active');
+  document.getElementById('overlay').classList.add('active');
+}
+
+function closeCart(){
+  document.getElementById('cartPanel').classList.remove('active');
+  document.getElementById('overlay').classList.remove('active');
+}
+
+function checkout(){
+  alert('Checkout and payment integration will be added later.');
+}
+
+function toggleMenu(){
+  document.getElementById('mobileNav').classList.toggle('active');
+}
+</script>
+
+</body>
+  </html>
+  
